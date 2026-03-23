@@ -49,7 +49,7 @@ pre-commit install
 
 ## 编写 RPM Spec 文件
 
-请按照 [openRuyi RPM Packaging Specification](/docs/guide/packaging-guidelines)，在本地编写或修改 `.spec` 文件。完成后，将更改提交并推送到您的个人远程仓库。
+请按照 [openRuyi Packaging Specification](/docs/guide/packaging-guidelines)，在本地编写或修改 `.spec` 文件。完成后，将更改提交并推送到您的个人远程仓库。
 
 为了减轻负担，可以参考其它发行版的构建脚本文件来编写我们的 RPM Spec，但不可全文复制粘贴。
 

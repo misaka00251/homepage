@@ -1,11 +1,11 @@
 ---
 id: rpmspecification
-title: openRuyi RPM Packaging Specification
-description: 本文档介绍了 openRuyi RPM Packaging Specification
+title: openRuyi Packaging Specification
+description: 本文档介绍了 openRuyi Packaging Specification
 slug: /guide/packaging-guidelines
 ---
 
-# openRuyi RPM Packaging Specification
+# openRuyi Packaging Specification
 
 ## 前言
 

@@ -49,7 +49,7 @@ For more details, see the [Pre-commit Usage Guide](/docs/guide/pre-commit-usage-
 
 ## Writing the RPM Spec File
 
-Please write or modify the `.spec` file locally in accordance with the [openRuyi RPM Packaging Specification](/docs/guide/packaging-guidelines). Once you finish, commit your changes and push them to your personal remote repository.
+Please write or modify the `.spec` file locally in accordance with the [openRuyi Packaging Specification](/docs/guide/packaging-guidelines). Once you finish, commit your changes and push them to your personal remote repository.
 
 To reduce the workload, you may refer to build scripts from other distributions when writing our RPM Spec file, but you must not copy and paste them verbatim.
 
