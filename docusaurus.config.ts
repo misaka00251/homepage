@@ -17,7 +17,7 @@ const config: Config = {
   baseUrl: '/',
 
   organizationName: 'openRuyi-Project',
-  projectName: 'website',
+  projectName: 'homepage',
 
   onBrokenLinks: 'throw',
 
