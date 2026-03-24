@@ -354,5 +354,35 @@
   },
   "homepage.features.third.description": {
     "message": "尽早暴露固件接口、平台语义与 Linux 互操作问题——更早修正、加速共识、缩短兼容周期"
+  },
+  "homepage.editions.server.title": {
+    "message": "Server Edition"
+  },
+  "homepage.editions.server.description": {
+    "message": "openRuyi Server 版专门为裸金属服务器量身打造"
+  },
+  "homepage.editions.container.title": {
+    "message": "Container Edition"
+  },
+  "homepage.editions.container.description": {
+    "message": "openRuyi Container 版是一个强大且精简的基础操作系统，适用于公共和私有云环境"
+  },
+  "homepage.editions.workstation.title": {
+    "message": "Workstation Edition"
+  },
+  "homepage.editions.workstation.description": {
+    "message": "openRuyi Workstation 是专门为桌面使用设计的版本，其内置 labwc"
+  },
+  "homepage.editions.zero.title": {
+    "message": "Zero Edition"
+  },
+  "homepage.editions.zero.description": {
+    "message": "openRuyi Zero 是专门为硅前阶段 SoC 启动和内核开发设计的特别版本"
+  },
+  "homepage.editions.download": {
+    "message": "立即下载"
+  },
+  "homepage.editions.sectionTitle": {
+    "message": "选择适合你的版本"
   }
 }
