@@ -57,7 +57,7 @@ const EditionList: EditionItem[] = [
                 labwc.
             </Translate>
         ),
-        downloadLink: '//releases.openruyi.cn/creek/2026.03/rva23/openruyi-2026.03-Workstation-labwc-dvd.iso',
+        downloadLink: '//releases.openruyi.cn/creek/2026.03/rva23/openRuyi-2026.03-Workstation-labwc-dvd.iso',
     },
     {
         icon: faGears,
