@@ -10,5 +10,9 @@
   "sidebar.community.category.Policy": {
     "message": "政策",
     "description": "The label for category 'Policy' in sidebar 'community'"
+  },
+  "sidebar.community.category.Release Policies": {
+    "message": "发行与维护政策",
+    "description": "The label for category 'Release Policies' in sidebar 'community'"
   }
 }
