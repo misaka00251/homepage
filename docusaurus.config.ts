@@ -181,6 +181,13 @@ const config: Config = {
       darkTheme: prismThemes.dracula,
     },
   } satisfies Preset.ThemeConfig,
+
+  markdown: {
+    format: 'detect',
+    mdx1Compat: {
+      headingIds: false
+    },
+  },
 };
 
 export default config;
