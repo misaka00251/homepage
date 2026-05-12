@@ -22,10 +22,6 @@ const config: Config = {
 
   onBrokenLinks: 'throw',
 
-  markdown: {
-    mermaid: true,
-  },
-
   i18n: {
     defaultLocale: 'en',
     locales: ['zh-Hans', 'en'],
@@ -183,6 +179,7 @@ const config: Config = {
   } satisfies Preset.ThemeConfig,
 
   markdown: {
+    mermaid: true,
     format: 'detect',
     mdx1Compat: {
       headingIds: false
