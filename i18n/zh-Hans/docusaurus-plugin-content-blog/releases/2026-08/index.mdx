@@ -1,0 +1,730 @@
+---
+title: openRuyi 2026.08 发布
+authors: [misaka00251]
+tags: [release]
+image: /img/openRuyi-social-card.png
+date: 2026-08-27
+slug: 2026-08/release
+---
+
+我们很高兴地宣布 openRuyi 2026 年 8 月版本正式发布。
+
+本次发布以安全修复为重点集中更新了软件包，推进了 RISC-V 与 RVA23 集成，扩展了云原生和加速计算能力，并更新了内核、工具链、科学计算软件栈与 KDE 桌面环境。
+
+{/* truncate */}
+
+## 亮点
+
+* **工具链、运行时与构建基础设施**：我们将 GCC 16 从 `16.1.0` 更新至 `16.2.0`，将 glibc 从 `2.43` 更新至 `2.44`，并将 Rust 从 `1.95.0` 更新至 `1.97.1`。发行版工程方面，本次更新还减少了对 LLVM 静态库的不必要构建依赖，并修复了 glibc 迁移带来的兼容性问题。
+
+* **内核与核心平台更新**：我们将主线内核从 `7.1.4` 更新至 `7.2`，并将长期支持内核从 `6.18.39` 更新至 `6.18.46`。本次更新还引入了基于 `kernel-team-tools` 的内核制作与转换流程：围绕上游基线跟踪、筛选和整理两条内核分支的下游改动，生成有序补丁集以及面向 x86_64、通用 RISC-V 和 RVA20 的内核配置，并将其发布为可供 RPM 构建复用的归档。初始迁移阶段共转换和核对了主线内核的 244 个补丁、LTS 内核的 560 个补丁及两套多架构配置。刷新后的内核进一步扩展了对 SpacemiT、Sophgo、T-Head 和 UltraRISC 等 RISC-V 平台的支持，涵盖 PCIe、USB、存储、网络、显示及其他 SoC 集成方向。Dracut 也从 `111` 更新至 `112`，并纳入了一项改善其与 glibc `2.44` 兼容性的上游修复。
+
+* **RISC-V 与 RVA23 集成**：LLVM 22 修复了 RISC-V 上的向量化崩溃，以及栈探测过程中寄存器被意外覆盖的问题；OpenBLAS 现在会在 RVA23 构建中选择 ZVL128B 目标。Rust QuickJS 绑定也新增了对 `riscv64gc` 和 `riscv64a23` 的支持，在保持共用 LP64D ABI 不变的前提下补齐了特定于架构的支持缺口。
+
+* **云原生、容器与存储**：openRuyi 新增 Kubernetes `1.35.5` 和 containerd `2.3.3`，并补充了构成可用云原生软件栈所需的网络、存储、CRI 和集群验证工具。
+
+* **科学计算与 HPC 能力扩展**：本次发布大幅扩展了以 Jupyter 和 Dask 为基础的 Python 科学计算环境，补齐了分布式数据处理、数值计算、地理空间计算、天文计算和图像分析等工作负载所需的依赖。OpenMPI `5.0.10` 及其 PMIx 和 PRRTE 运行时组件也加入了发行版，为分布式计算和高性能计算提供了 MPI 软件栈。
+
+* **人工智能与加速计算**：本次发布新增 ROCm `7.2.4`，并在 PyTorch `2.13.0` 中启用了 ROCm 后端。vLLM 以 CPU 和 ROCm 两种构建变体加入 openRuyi，相关编译器与计算机视觉依赖也同步完成了 ABI 和 multibuild 适配。
+
+* **桌面与图形软件栈改进**：KDE Frameworks 从 `6.27.0` 更新至 `6.28.0`，KDE Plasma 则从 `6.7.1` 更新至 `6.7.4`。GIMP `3.2.0` 及其图像处理依赖栈也加入了发行版，进一步丰富了面向用户的图形软件选择。
+
+## 安全更新
+
+* `curl` 更新到 `8.21.0`，包含针对影响 `8.20.0` 的 18 个已公布漏洞的修复：[CVE-2026-12064]、[CVE-2026-11856]、[CVE-2026-11586]、[CVE-2026-11564]、[CVE-2026-11352]、[CVE-2026-10536]、[CVE-2026-9547]、[CVE-2026-9546]、[CVE-2026-9545]、[CVE-2026-9080]、[CVE-2026-9079]、[CVE-2026-8932]、[CVE-2026-8927]、[CVE-2026-8926]、[CVE-2026-8925]、[CVE-2026-8924]、[CVE-2026-8458]、[CVE-2026-8286]。
+
+* `openjdk-17`、`openjdk-21`、`openjdk-25` 和 `openjdk-latest` 分别更新到 `17.0.20.8`、`21.0.12.8`、`25.0.4.7` 和 `26.0.2.10`，包含 Java SE 2026 年 7 月关键补丁更新中针对 [CVE-2026-62574]、[CVE-2026-41254]、[CVE-2026-47063]、[CVE-2026-60147]、[CVE-2026-46968]、[CVE-2026-47027]、[CVE-2026-47021]、[CVE-2026-46917]、[CVE-2026-47059]、[CVE-2026-47010] 的修复。
+
+* `dotnet10.0` 更新到 `10.0.110`，包含 .NET `10.0.10` 中针对 [CVE-2026-50651]、[CVE-2026-50526]、[CVE-2026-50524]、[CVE-2026-50646]、[CVE-2026-50649]、[CVE-2026-50650]、[CVE-2026-56158]、[CVE-2026-47302]、[CVE-2026-50648]、[CVE-2026-50527]、[CVE-2026-47304]、[CVE-2026-50525]、[CVE-2026-57108]、[CVE-2026-50528]、[CVE-2026-50659]、[CVE-2026-47300]、[CVE-2026-47303] 的修复。
+
+* `openssh` 更新到 `10.5p1`，包含针对代理转发限制、远程文件复制路径处理、认证延迟执行、隧道限制、拒绝服务问题和客户端内存安全缺陷的上游安全修复。CVE 编号尚未核实。
+
+* `php` 更新到 `8.5.9`，包含针对 [CVE-2026-14355]、[CVE-2026-17544]、[CVE-2026-9672]、[CVE-2026-17543]、[CVE-2026-7260] 的修复。
+
+* `pcre2` 更新到 `10.47`，包含针对 [CVE-2025-58050] 的修复。
+
+* `libseccomp` 更新到 `2.6.1`，包含针对 [GHSA-4q85-33p6-j5g6]、[GHSA-46fr-jh49-xvhx]、[GHSA-2hqh-5c36-grrm] 的修复。
+
+* `python-diffusers` 更新到 `0.38.0`，包含针对 [CVE-2026-44513]、[CVE-2026-44827]、[GHSA-7wx4-6vff-v64p] 的修复。
+
+* `python-gradio-client` 更新到 `2.6.0`，此次软件包更新以安全修复为重点。CVE 编号尚未核实。
+
+* `python-hpack` 更新到 `4.2.0`，包含针对 [GHSA-8v8h-hg4w-mvq2] 的修复。
+
+* `python-icalendar` 更新到 `7.2.2`，包含针对 [GHSA-cv84-9p8j-fj68] 的修复。
+
+* `python-idna` 更新到 `3.18`，包含针对 [CVE-2026-45409] 的修复。
+
+* `python-joserfc` 更新到 `1.7.4`，包含针对 [CVE-2026-49852]、[CVE-2026-48990] 的修复。
+
+* `python-langsmith` 更新到 `0.11.0`，包含针对 [GHSA-f4xh-w4cj-qxq8] 的修复。
+
+* `python-lxml` 更新到 `6.1.1`，包含针对 [CVE-2026-41066] 的修复。
+
+* `python-msgpack` 更新到 `1.2.1`，包含针对 [GHSA-6v7p-g79w-8964] 的修复。
+
+* `python-nltk` 更新到 `3.10.3`，包含针对 [CVE-2026-54293] 的修复。
+
+* `python-protobuf` 更新到 `7.35.1`，包含针对 [CVE-2026-0994] 的修复。
+
+* `python-pydantic-settings` 更新到 `2.15.0`，包含针对 [GHSA-4xgf-cpjx-pc3j] 的修复。
+
+* `python-pyjwt` 更新到 `2.13.0`，包含针对 [CVE-2026-48522]、[CVE-2026-48523]、[CVE-2026-48524]、[CVE-2026-48525]、[CVE-2026-48526] 的修复。
+
+* `python-python-multipart` 更新到 `0.0.32`，包含针对 [CVE-2026-40347]、[CVE-2026-42561]、[CVE-2026-53537]、[CVE-2026-53538]、[CVE-2026-53539]、[CVE-2026-53540] 的修复。
+
+* `python-sagemaker-core` 更新到 `2.20.0`，包含针对 [CVE-2026-1777]、[CVE-2026-1778]、[CVE-2024-34072]、[CVE-2024-34073] 的修复。
+
+* `python-starlette` 更新到 `1.6.0`，包含针对 [CVE-2026-48710]、[CVE-2026-48817]、[CVE-2026-48818]、[CVE-2026-54282]、[CVE-2026-54283] 的修复。
+
+* `python-tornado` 更新到 `6.5.8`，包含针对 [CVE-2026-31958]、[CVE-2026-35536]、[GHSA-3x9g-8vmp-wqvf]、[GHSA-78cv-mqj4-43f7]、[GHSA-cx3h-4qpv-8hc9]、[GHSA-mgf9-4vpg-hj56]、[GHSA-pw6j-qg29-8w7f] 的修复。
+
+* `python-wheel` 更新到 `0.48.0`，包含针对 [CVE-2026-24049] 的修复。
+
+openRuyi 继续提供面向不同场景的四个版本：**Server**、**Container**、**Desktop** 和 **Zero（BSP validation）**。你可以前往 [openRuyi release site](https://releases.openruyi.cn/creek/2026.08/rva23/) 下载到本次发布。
+
+现有用户只需执行 `dnf update`，即可完成升级！
+
+***
+
+欢迎社区对本次发布进行测试，并向我们反馈意见。
+
+## Changelog
+
+如需查看完整的软件包级别变更详情，可以参考下方按更新和新增软件包分类整理的完整更新日志。
+
+<details>
+<summary>已更新软件包列表</summary>
+
+- breeze: 6.7.1 -> 6.7.4
+- capstone: 5.0.3 -> 5.0.6
+- ceph: 21.3.0 -> 21.3.0+git20260811.7abb41e
+- clang-wrap: 0+git20260720.c9b91a6 -> 0+git20260817.d668fd0
+- curl: 8.20.0 -> 8.21.0
+- discover: 6.7.1 -> 6.7.4
+- dotnet10.0: 10.0.103 -> 10.0.110
+- dracut: 111 -> 112
+- dwz: 0.16 -> 0.17
+- elfutils: 0.194 -> 0.196
+- gcc16: 16.1.0 -> 16.2.0
+- glibc: 2.43 -> 2.44
+- go-github-brianvoe-gofakeit -> go-github-brianvoe-gofakeit-v7: 7.14.1 -> 7.15.0
+- go-github-klauspost-compress: 1.18.6 -> 1.19.0
+- go-gopkg-yaml.v4: 4.0.0~rc4 -> 4.0.0~rc6
+- grpc: 1.80.0 -> 1.82.1
+- isl: 0.27 -> 0.28
+- kactivitymanagerd: 6.7.1 -> 6.7.4
+- kde-cli-tools: 6.7.1 -> 6.7.4
+- kde-gtk-config: 6.7.1 -> 6.7.4
+- kdecoration: 6.7.1 -> 6.7.4
+- kf6-attica: 6.27.0 -> 6.28.0
+- kf6-baloo: 6.27.0 -> 6.28.0
+- kf6-breeze-icons: 6.27.0 -> 6.28.0
+- kf6-extra-cmake-modules: 6.27.0 -> 6.28.0
+- kf6-frameworkintegration: 6.27.0 -> 6.28.0
+- kf6-karchive: 6.27.0 -> 6.28.0
+- kf6-kauth: 6.27.0 -> 6.28.0
+- kf6-kbookmarks: 6.27.0 -> 6.28.0
+- kf6-kcmutils: 6.27.0 -> 6.28.0
+- kf6-kcodecs: 6.27.0 -> 6.28.0
+- kf6-kcolorscheme: 6.27.0 -> 6.28.0
+- kf6-kcompletion: 6.27.0 -> 6.28.0
+- kf6-kconfig: 6.27.0 -> 6.28.0
+- kf6-kconfigwidgets: 6.27.0 -> 6.28.0
+- kf6-kcoreaddons: 6.27.0 -> 6.28.0
+- kf6-kcrash: 6.27.0 -> 6.28.0
+- kf6-kdbusaddons: 6.27.0 -> 6.28.0
+- kf6-kdeclarative: 6.27.0 -> 6.28.0
+- kf6-kded: 6.27.0 -> 6.28.0
+- kf6-kdesu: 6.27.0 -> 6.28.0
+- kf6-kdnssd: 6.27.0 -> 6.28.0
+- kf6-kdoctools: 6.27.0 -> 6.28.0
+- kf6-kfilemetadata: 6.27.0 -> 6.28.0
+- kf6-kglobalaccel: 6.27.0 -> 6.28.0
+- kf6-kguiaddons: 6.27.0 -> 6.28.0
+- kf6-kholidays: 6.27.0 -> 6.28.0
+- kf6-ki18n: 6.27.0 -> 6.28.0
+- kf6-kiconthemes: 6.27.0 -> 6.28.0
+- kf6-kidletime: 6.27.0 -> 6.28.0
+- kf6-kimageformats: 6.27.0 -> 6.28.0
+- kf6-kio: 6.27.0 -> 6.28.0
+- kf6-kirigami: 6.27.0 -> 6.28.0
+- kf6-kitemmodels: 6.27.0 -> 6.28.0
+- kf6-kitemviews: 6.27.0 -> 6.28.0
+- kf6-kjobwidgets: 6.27.0 -> 6.28.0
+- kf6-knewstuff: 6.27.0 -> 6.28.0
+- kf6-knotifications: 6.27.0 -> 6.28.0
+- kf6-knotifyconfig: 6.27.0 -> 6.28.0
+- kf6-kpackage: 6.27.0 -> 6.28.0
+- kf6-kparts: 6.27.0 -> 6.28.0
+- kf6-kpty: 6.27.0 -> 6.28.0
+- kf6-kquickcharts: 6.27.0 -> 6.28.0
+- kf6-krunner: 6.27.0 -> 6.28.0
+- kf6-kservice: 6.27.0 -> 6.28.0
+- kf6-kstatusnotifieritem: 6.27.0 -> 6.28.0
+- kf6-ksvg: 6.27.0 -> 6.28.0
+- kf6-ktexteditor: 6.27.0 -> 6.28.0
+- kf6-ktextwidgets: 6.27.0 -> 6.28.0
+- kf6-kunitconversion: 6.27.0 -> 6.28.0
+- kf6-kuserfeedback: 6.27.0 -> 6.28.0
+- kf6-kwallet: 6.27.0 -> 6.28.0
+- kf6-kwidgetsaddons: 6.27.0 -> 6.28.0
+- kf6-kwindowsystem: 6.27.0 -> 6.28.0
+- kf6-kxmlgui: 6.27.0 -> 6.28.0
+- kf6-modemmanager-qt: 6.27.0 -> 6.28.0
+- kf6-networkmanager-qt: 6.27.0 -> 6.28.0
+- kf6-prison: 6.27.0 -> 6.28.0
+- kf6-purpose: 6.27.0 -> 6.28.0
+- kf6-qqc2-desktop-style: 6.27.0 -> 6.28.0
+- kf6-solid: 6.27.0 -> 6.28.0
+- kf6-sonnet: 6.27.0 -> 6.28.0
+- kf6-syndication: 6.27.0 -> 6.28.0
+- kf6-syntax-highlighting: 6.27.0 -> 6.28.0
+- kf6-threadweaver: 6.27.0 -> 6.28.0
+- kglobalacceld: 6.7.1 -> 6.7.4
+- kinfocenter: 6.7.1 -> 6.7.4
+- kmenuedit: 6.7.1 -> 6.7.4
+- knighttime: 6.7.1 -> 6.7.4
+- kpipewire: 6.7.1 -> 6.7.4
+- kscreen: 6.7.1 -> 6.7.4
+- kscreenlocker: 6.7.1 -> 6.7.4
+- ksystemstats: 6.7.1 -> 6.7.4
+- kwayland6: 6.7.1 -> 6.7.4
+- kwin: 6.7.1 -> 6.7.4
+- layer-shell-qt: 6.7.1 -> 6.7.4
+- libatomic_ops: 7.8.2 -> 7.10.0
+- libkscreen: 6.7.1 -> 6.7.4
+- libksysguard: 6.7.1 -> 6.7.4
+- libplasma: 6.7.1 -> 6.7.4
+- libseccomp: 2.6.0 -> 2.6.1
+- linux-lts: 6.18.39 -> 6.18.46
+- linux: 7.1.4 -> 7.2.0
+- llvmir-converter: 0+git20260717.bdb85ba -> 0+git20260824.c1bb44c
+- milou: 6.7.1 -> 6.7.4
+- minicom: 2.10 -> 2.11.1
+- mold: 2.41.0 -> 2.42.0
+- openjdk-17: 17.0.19.10 -> 17.0.20.8
+- openjdk-21: 21.0.11.10 -> 21.0.12.8
+- openjdk-25: 25.0.3.9 -> 25.0.4.7
+- openjdk-latest: 26.0.1.8 -> 26.0.2.10
+- openssh: 10.3p1 -> 10.5p1
+- p11-kit: 0.25.5 -> 0.26.5
+- pcre2: 10.45 -> 10.47
+- php: 8.5.7 -> 8.5.9
+- plasma-activities-stats: 6.7.1 -> 6.7.4
+- plasma-activities: 6.7.1 -> 6.7.4
+- plasma-desktop: 6.7.1 -> 6.7.4
+- plasma-disks: 6.7.1 -> 6.7.4
+- plasma-integration: 6.7.1 -> 6.7.4
+- plasma-login-manager: 6.7.1 -> 6.7.4
+- plasma-nm: 6.7.1 -> 6.7.4
+- plasma-pa: 6.7.1 -> 6.7.4
+- plasma-sdk: 6.7.1 -> 6.7.4
+- plasma-systemmonitor: 6.7.1 -> 6.7.4
+- plasma-workspace: 6.7.1 -> 6.7.4
+- plasma5support: 6.7.1 -> 6.7.4
+- polkit-kde-agent-1: 6.7.1 -> 6.7.4
+- powerdevil: 6.7.1 -> 6.7.4
+- python-boto3: 1.43.6 -> 1.43.75
+- python-botocore: 1.43.11 -> 1.43.75
+- python-diffusers: 0.37.1 -> 0.38.0
+- python-gradio-client: 2.5.0 -> 2.6.0
+- python-grpcio-reflection: 1.80.0 -> 1.82.1
+- python-hpack: 4.1.0 -> 4.2.0
+- python-huggingface-hub: 1.5.0 -> 1.10.0
+- python-icalendar: 7.1.0 -> 7.2.2
+- python-idna: 3.13 -> 3.18
+- python-joserfc: 1.6.4 -> 1.7.4
+- python-langsmith: 0.8.8 -> 0.11.0
+- python-lxml: 6.0.1 -> 6.1.1
+- python-msgpack: 1.1.2 -> 1.2.1
+- python-nltk: 3.9.4 -> 3.10.3
+- python-protobuf: 6.33.2 -> 7.35.1
+- python-pydantic-settings: 2.14.1 -> 2.15.0
+- python-pyjwt: 2.12.1 -> 2.13.0
+- python-python-multipart: 0.0.28 -> 0.0.32
+- python-pytz: 2025.1 -> 2026.2
+- python-s3transfer: 0.17.0 -> 0.19.2
+- python-sagemaker-core: 2.12.0 -> 2.20.0
+- python-scipy: 1.17.0 -> 1.17.1
+- python-starlette: 1.0.0 -> 1.6.0
+- python-torch: 2.10.0 -> 2.13.0
+- python-torchvision: 0.25.0 -> 0.28.0
+- python-tornado: 6.5.4 -> 6.5.8
+- python-transformers: 5.2.0 -> 5.12.1
+- python-triton: 3.7.0 -> 3.7.1
+- python-wheel: 0.45.1 -> 0.48.0
+- python-xgrammar: 0.1.33 -> 0.2.1
+- qqc2-breeze-style: 6.7.1 -> 6.7.4
+- qtkeychain: 0.15.0 -> 0.16.0
+- rust-bin: 1.95.0 -> 1.97.1
+- rust-reqwest-0.13: 0.13.2 -> 0.13.4
+- rust: 1.95.0 -> 1.97.1
+- sddm-kcm: 6.7.1 -> 6.7.4
+- systemsettings: 6.7.1 -> 6.7.4
+- tmux: 3.6a -> 3.7c
+- tzdata: 2026a -> 2026c
+- xdg-desktop-portal-kde: 6.7.1 -> 6.7.4
+- xfsprogs: 6.16.0 -> 7.1.1
+
+</details>
+
+<details>
+<summary>新增软件包列表</summary>
+
+- agg
+- amdsmi
+- asciinema
+- babl
+- benchmark
+- calico
+- ceph-csi
+- cfitsio
+- cfortran
+- cgctl
+- containerd
+- continuity
+- crc32c
+- cri-tools
+- dash
+- ecbuild
+- eccodes
+- etcd
+- gdal
+- gegl
+- gexiv2
+- gimp
+- go-bazil-fuse
+- go-github-adalogics-go-fuzz-headers
+- go-github-aperturerobotics-json-iterator-lite
+- go-github-aperturerobotics-protobuf-go-lite
+- go-github-apparentlymart-go-textseg-v15
+- go-github-apparentlymart-go-textseg-v17
+- go-github-blang-semver-v4
+- go-github-cenkalti-backoff-v4
+- go-github-cenkalti-backoff-v5
+- go-github-checkpoint-restore-go-criu-v7
+- go-github-checkpoint-restore-go-criu-v8
+- go-github-cilium-ebpf
+- go-github-codahale-rfc6979
+- go-github-coder-quartz
+- go-github-containerd-btrfs-v2
+- go-github-containerd-fifo
+- go-github-containerd-go-cni
+- go-github-containerd-go-dmverity
+- go-github-containerd-go-runc
+- go-github-containerd-nri
+- go-github-containerd-otelttrpc
+- go-github-containerd-platforms
+- go-github-containerd-plugin
+- go-github-containerd-ttrpc
+- go-github-containerd-typeurl-v2
+- go-github-containernetworking-cni
+- go-github-containernetworking-plugins
+- go-github-containers-ocicrypt
+- go-github-datadog-zstd
+- go-github-docker-go-events
+- go-github-emersion-go-sasl
+- go-github-emersion-go-smtp
+- go-github-erofs-go-erofs
+- go-github-fatih-set
+- go-github-github-go-spdx-v2
+- go-github-go-logr-zapr
+- go-github-go-ole-go-ole
+- go-github-go-openapi-analysis
+- go-github-go-openapi-loads
+- go-github-go-openapi-runtime
+- go-github-go-openapi-validate
+- go-github-go-restruct-restruct
+- go-github-gohugoio-hashstructure
+- go-github-google-certtostore
+- go-github-google-deck
+- go-github-google-go-cmdtest
+- go-github-google-go-intervals
+- go-github-google-licensecheck
+- go-github-google-renameio
+- go-github-gookit-assert
+- go-github-gookit-color
+- go-github-grpc-ecosystem-go-grpc-middleware
+- go-github-grpc-ecosystem-go-grpc-middleware-v2
+- go-github-grpc-ecosystem-go-grpc-prometheus
+- go-github-hanwen-go-fuse-v2
+- go-github-hashicorp-golang-lru-v2
+- go-github-henvic-httpretty
+- go-github-huandu-xstrings
+- go-github-invopop-jsonschema
+- go-github-jedib0t-go-pretty-v6
+- go-github-jinzhu-copier
+- go-github-knqyf263-go-plugin
+- go-github-lucasjones-reggen
+- go-github-magiconair-properties
+- go-github-masterminds-goutils
+- go-github-mattn-go-shellwords
+- go-github-mgutz-ansi
+- go-github-microsoft-hcsshim
+- go-github-miekg-pkcs11
+- go-github-mikelolasagasti-xz
+- go-github-minio-minlz
+- go-github-minio-sha256-simd
+- go-github-mistifyio-go-zfs-v3
+- go-github-nwaples-rardecode-v2
+- go-github-opencontainers-runtime-tools
+- go-github-opencontainers-selinux
+- go-github-opentracing-opentracing-go
+- go-github-outscale-osc-sdk-go
+- go-github-ovh-go-ovh
+- go-github-pb33f-libopenapi
+- go-github-pb33f-libopenapi-validator
+- go-github-pb33f-testify
+- go-github-pborman-indent
+- go-github-pkg-profile
+- go-github-planetscale-vtprotobuf-v0.4
+- go-github-pquerna-cachecontrol
+- go-github-rs-cors
+- go-github-rs-xid
+- go-github-rwcarlsen-goexif
+- go-github-saintfish-chardet
+- go-github-sanity-io-litter
+- go-github-sassoftware-go-rpmutils
+- go-github-scaleway-scaleway-sdk-go
+- go-github-scylladb-go-set
+- go-github-sebdah-goldie-v2
+- go-github-secure-systems-lab-go-securesystemslib
+- go-github-segmentio-fasthash
+- go-github-shopspring-decimal
+- go-github-smallnest-ringbuffer
+- go-github-smallstep-pkcs7
+- go-github-sorairolake-lzip-go
+- go-github-spdx-gordf
+- go-github-stackexchange-wmi
+- go-github-stackitcloud-stackit-sdk-go
+- go-github-stangelandcl-ppmd
+- go-github-starry-s-zip
+- go-github-stefanberger-go-pkcs11uri
+- go-github-tailscale-hujson
+- go-github-tchap-go-patricia-v2
+- go-github-therootcompany-xz
+- go-github-ulikunitz-xz
+- go-github-urfave-cli
+- go-github-urfave-cli-v2
+- go-github-vbatts-go-mtree
+- go-github-vifraa-gopom
+- go-github-vishvananda-netlink
+- go-github-vishvananda-netns
+- go-github-vmihailenco-msgpack-v5
+- go-github-vmihailenco-tagparser-v2
+- go-github-vultr-govultr-v3
+- go-github-wagoodman-go-partybus
+- go-github-wagoodman-go-progress
+- go-github-xeipuuv-gojsonpointer
+- go-github-xeipuuv-gojsonreference
+- go-github-xeipuuv-gojsonschema
+- go-github-xi2-xz
+- go-github-xlab-treeprint
+- go-github-zclconf-go-cty
+- go-go4
+- go-gopkg-dnaeon-go-vcr.v4
+- go-k8s-component-base
+- go-k8s-cri-api
+- go-k8s-cri-streaming
+- go-k8s-streaming
+- go-opentelemetry-otel-exporters-otlp-otlptrace
+- go-pgregory-rapid
+- go-toml
+- half
+- hipblaslt
+- hipcub
+- hipfft
+- hiprand
+- hipsolver
+- hipsparse
+- hipsparselt
+- jxrlib
+- kubernetes
+- lerc
+- libdeflate
+- libftdi
+- libjaylink
+- llama-cpp
+- magma
+- miopen
+- moby
+- muon
+- openmpi
+- perl-ExtUtils-CBuilder
+- perl-ExtUtils-CChecker
+- perl-MIME-Charset
+- perl-Syntax-Keyword-Try
+- perl-Text-CharWidth
+- perl-Text-WrapI18N
+- perl-Unicode-LineBreak
+- perl-XS-Parse-Keyword
+- phoronix-test-suite
+- pmix
+- po4a
+- postfix
+- proj
+- prrte
+- python-apache-tvm-ffi
+- python-argon2-cffi
+- python-argon2-cffi-bindings
+- python-astropy
+- python-astropy-iers-data
+- python-backports-zstd
+- python-blake3
+- python-bleach
+- python-cfgrib
+- python-comm
+- python-debugpy
+- python-defusedxml
+- python-deprecation
+- python-donfig
+- python-eccodes
+- python-email-validator
+- python-extension-helpers
+- python-faiss
+- python-findlibs
+- python-fitsio
+- python-fqdn
+- python-gdal
+- python-google-crc32c
+- python-graphviz
+- python-grpcio-status
+- python-hatch-jupyter-builder
+- python-httpcore2
+- python-id
+- python-imagecodecs
+- python-imageio
+- python-imageio-ffmpeg
+- python-importlib-resources
+- python-ipycytoscape
+- python-ipykernel
+- python-ipyparallel
+- python-ipywidgets
+- python-isoduration
+- python-jupyter-client
+- python-jupyter-core
+- python-jupyter-events
+- python-jupyter-packaging
+- python-jupyter-server
+- python-jupyter-server-terminals
+- python-jupyterlab-pygments
+- python-jupyterlab-widgets
+- python-kerchunk
+- python-kernels
+- python-kernels-data
+- python-llvmlite
+- python-mistune
+- python-msgspec
+- python-nbclient
+- python-nbconvert
+- python-nbformat
+- python-numba
+- python-numcodecs
+- python-pandocfilters
+- python-py4j
+- python-pyerfa
+- python-pyspark
+- python-pytest-remotedata
+- python-pytest-runner
+- python-pyzstd
+- python-rawpy
+- python-rfc3161-client
+- python-rfc3339-validator
+- python-rfc3986-validator
+- python-rfc3987
+- python-rfc3987-syntax
+- python-rfc8785
+- python-scikit-image
+- python-securesystemslib
+- python-send2trash
+- python-sigstore
+- python-sigstore-models
+- python-sigstore-rekor-types
+- python-sparse
+- python-spectate
+- python-terminado
+- python-tifffile
+- python-tinycss2
+- python-tuf
+- python-uri-template
+- python-vllm
+- python-webcolors
+- python-widgetsnbextension
+- python-zarr
+- python-zfpy
+- rccl
+- rocfft
+- rocm-core
+- rocm-origami
+- rocrand
+- rocthrust
+- roctracer
+- rust-anstyle-lossy-1
+- rust-anstyle-svg-1
+- rust-avt-0.18
+- rust-clap-cargo-0.18
+- rust-core-maths-0.1
+- rust-cvt-0.1
+- rust-effective-limits-0.5
+- rust-enum-map-2
+- rust-enum-map-derive-0.17
+- rust-env-proxy-0.4
+- rust-float-cmp-0.9
+- rust-font-types-0.9
+- rust-fontconfig-parser-0.5
+- rust-fontdb-0.23
+- rust-fs-at-0.2
+- rust-gif-0.13
+- rust-gif-dispose-5
+- rust-gifski-1
+- rust-git-testament-0.2
+- rust-git-testament-derive-0.2
+- rust-html-escape-0.2
+- rust-imagequant-4
+- rust-imagesize-0.13
+- rust-itertools-0.15
+- rust-kurbo-0.11
+- rust-lodepng-3
+- rust-natord-1
+- rust-ordered-channel-1
+- rust-pbr-1
+- rust-pico-args-0.5
+- rust-platforms-3
+- rust-platforms-4
+- rust-png-0.17
+- rust-read-fonts-0.29
+- rust-remove-dir-all-1
+- rust-resize-0.8
+- rust-resvg-0.45
+- rust-retry-2
+- rust-roxmltree-0.20
+- rust-rs-tracing-1
+- rust-rustybuzz-0.20
+- rust-similar-3
+- rust-simplecss-0.2
+- rust-skrifa-0.31
+- rust-snapbox-1
+- rust-snapbox-macros-1
+- rust-strict-num-0.1
+- rust-svgtypes-0.15
+- rust-swash-0.2
+- rust-sys-info-0.9
+- rust-threadpool-1
+- rust-tiny-skia-0.11
+- rust-tiny-skia-path-0.11
+- rust-unicode-bidi-mirroring-0.4
+- rust-unicode-ccc-0.4
+- rust-unicode-script-0.5
+- rust-unicode-vo-0.1
+- rust-usvg-0.45
+- rust-xmlwriter-0.1
+- rust-yazi-0.2
+- rust-yuv-0.1
+- rust-zeno-0.3
+- rust-zune-core-0.4
+- rust-zune-jpeg-0.4
+- rustup
+- sonobuoy
+- sst-ctl
+- u-boot-tools
+- zfp
+
+</details>
+
+[CVE-2024-34072]: https://www.cve.org/CVERecord?id=CVE-2024-34072
+[CVE-2024-34073]: https://www.cve.org/CVERecord?id=CVE-2024-34073
+[CVE-2025-58050]: https://www.cve.org/CVERecord?id=CVE-2025-58050
+[CVE-2026-0994]: https://www.cve.org/CVERecord?id=CVE-2026-0994
+[CVE-2026-10536]: https://www.cve.org/CVERecord?id=CVE-2026-10536
+[CVE-2026-11352]: https://www.cve.org/CVERecord?id=CVE-2026-11352
+[CVE-2026-11564]: https://www.cve.org/CVERecord?id=CVE-2026-11564
+[CVE-2026-11586]: https://www.cve.org/CVERecord?id=CVE-2026-11586
+[CVE-2026-11856]: https://www.cve.org/CVERecord?id=CVE-2026-11856
+[CVE-2026-12064]: https://www.cve.org/CVERecord?id=CVE-2026-12064
+[CVE-2026-14355]: https://www.cve.org/CVERecord?id=CVE-2026-14355
+[CVE-2026-17543]: https://www.cve.org/CVERecord?id=CVE-2026-17543
+[CVE-2026-17544]: https://www.cve.org/CVERecord?id=CVE-2026-17544
+[CVE-2026-1777]: https://www.cve.org/CVERecord?id=CVE-2026-1777
+[CVE-2026-1778]: https://www.cve.org/CVERecord?id=CVE-2026-1778
+[CVE-2026-24049]: https://www.cve.org/CVERecord?id=CVE-2026-24049
+[CVE-2026-31958]: https://www.cve.org/CVERecord?id=CVE-2026-31958
+[CVE-2026-35536]: https://www.cve.org/CVERecord?id=CVE-2026-35536
+[CVE-2026-40347]: https://www.cve.org/CVERecord?id=CVE-2026-40347
+[CVE-2026-41066]: https://www.cve.org/CVERecord?id=CVE-2026-41066
+[CVE-2026-41254]: https://www.cve.org/CVERecord?id=CVE-2026-41254
+[CVE-2026-42561]: https://www.cve.org/CVERecord?id=CVE-2026-42561
+[CVE-2026-44513]: https://www.cve.org/CVERecord?id=CVE-2026-44513
+[CVE-2026-44827]: https://www.cve.org/CVERecord?id=CVE-2026-44827
+[CVE-2026-45409]: https://www.cve.org/CVERecord?id=CVE-2026-45409
+[CVE-2026-46917]: https://www.cve.org/CVERecord?id=CVE-2026-46917
+[CVE-2026-46968]: https://www.cve.org/CVERecord?id=CVE-2026-46968
+[CVE-2026-47010]: https://www.cve.org/CVERecord?id=CVE-2026-47010
+[CVE-2026-47021]: https://www.cve.org/CVERecord?id=CVE-2026-47021
+[CVE-2026-47027]: https://www.cve.org/CVERecord?id=CVE-2026-47027
+[CVE-2026-47059]: https://www.cve.org/CVERecord?id=CVE-2026-47059
+[CVE-2026-47063]: https://www.cve.org/CVERecord?id=CVE-2026-47063
+[CVE-2026-47300]: https://www.cve.org/CVERecord?id=CVE-2026-47300
+[CVE-2026-47302]: https://www.cve.org/CVERecord?id=CVE-2026-47302
+[CVE-2026-47303]: https://www.cve.org/CVERecord?id=CVE-2026-47303
+[CVE-2026-47304]: https://www.cve.org/CVERecord?id=CVE-2026-47304
+[CVE-2026-48522]: https://www.cve.org/CVERecord?id=CVE-2026-48522
+[CVE-2026-48523]: https://www.cve.org/CVERecord?id=CVE-2026-48523
+[CVE-2026-48524]: https://www.cve.org/CVERecord?id=CVE-2026-48524
+[CVE-2026-48525]: https://www.cve.org/CVERecord?id=CVE-2026-48525
+[CVE-2026-48526]: https://www.cve.org/CVERecord?id=CVE-2026-48526
+[CVE-2026-48710]: https://www.cve.org/CVERecord?id=CVE-2026-48710
+[CVE-2026-48817]: https://www.cve.org/CVERecord?id=CVE-2026-48817
+[CVE-2026-48818]: https://www.cve.org/CVERecord?id=CVE-2026-48818
+[CVE-2026-48990]: https://www.cve.org/CVERecord?id=CVE-2026-48990
+[CVE-2026-49852]: https://www.cve.org/CVERecord?id=CVE-2026-49852
+[CVE-2026-50524]: https://www.cve.org/CVERecord?id=CVE-2026-50524
+[CVE-2026-50525]: https://www.cve.org/CVERecord?id=CVE-2026-50525
+[CVE-2026-50526]: https://www.cve.org/CVERecord?id=CVE-2026-50526
+[CVE-2026-50527]: https://www.cve.org/CVERecord?id=CVE-2026-50527
+[CVE-2026-50528]: https://www.cve.org/CVERecord?id=CVE-2026-50528
+[CVE-2026-50646]: https://www.cve.org/CVERecord?id=CVE-2026-50646
+[CVE-2026-50648]: https://www.cve.org/CVERecord?id=CVE-2026-50648
+[CVE-2026-50649]: https://www.cve.org/CVERecord?id=CVE-2026-50649
+[CVE-2026-50650]: https://www.cve.org/CVERecord?id=CVE-2026-50650
+[CVE-2026-50651]: https://www.cve.org/CVERecord?id=CVE-2026-50651
+[CVE-2026-50659]: https://www.cve.org/CVERecord?id=CVE-2026-50659
+[CVE-2026-53537]: https://www.cve.org/CVERecord?id=CVE-2026-53537
+[CVE-2026-53538]: https://www.cve.org/CVERecord?id=CVE-2026-53538
+[CVE-2026-53539]: https://www.cve.org/CVERecord?id=CVE-2026-53539
+[CVE-2026-53540]: https://www.cve.org/CVERecord?id=CVE-2026-53540
+[CVE-2026-54282]: https://www.cve.org/CVERecord?id=CVE-2026-54282
+[CVE-2026-54283]: https://www.cve.org/CVERecord?id=CVE-2026-54283
+[CVE-2026-54293]: https://www.cve.org/CVERecord?id=CVE-2026-54293
+[CVE-2026-56158]: https://www.cve.org/CVERecord?id=CVE-2026-56158
+[CVE-2026-57108]: https://www.cve.org/CVERecord?id=CVE-2026-57108
+[CVE-2026-60147]: https://www.cve.org/CVERecord?id=CVE-2026-60147
+[CVE-2026-62574]: https://www.cve.org/CVERecord?id=CVE-2026-62574
+[CVE-2026-7260]: https://www.cve.org/CVERecord?id=CVE-2026-7260
+[CVE-2026-8286]: https://www.cve.org/CVERecord?id=CVE-2026-8286
+[CVE-2026-8458]: https://www.cve.org/CVERecord?id=CVE-2026-8458
+[CVE-2026-8924]: https://www.cve.org/CVERecord?id=CVE-2026-8924
+[CVE-2026-8925]: https://www.cve.org/CVERecord?id=CVE-2026-8925
+[CVE-2026-8926]: https://www.cve.org/CVERecord?id=CVE-2026-8926
+[CVE-2026-8927]: https://www.cve.org/CVERecord?id=CVE-2026-8927
+[CVE-2026-8932]: https://www.cve.org/CVERecord?id=CVE-2026-8932
+[CVE-2026-9079]: https://www.cve.org/CVERecord?id=CVE-2026-9079
+[CVE-2026-9080]: https://www.cve.org/CVERecord?id=CVE-2026-9080
+[CVE-2026-9545]: https://www.cve.org/CVERecord?id=CVE-2026-9545
+[CVE-2026-9546]: https://www.cve.org/CVERecord?id=CVE-2026-9546
+[CVE-2026-9547]: https://www.cve.org/CVERecord?id=CVE-2026-9547
+[CVE-2026-9672]: https://www.cve.org/CVERecord?id=CVE-2026-9672
+[GHSA-2hqh-5c36-grrm]: https://github.com/advisories/GHSA-2hqh-5c36-grrm
+[GHSA-3x9g-8vmp-wqvf]: https://github.com/advisories/GHSA-3x9g-8vmp-wqvf
+[GHSA-46fr-jh49-xvhx]: https://github.com/advisories/GHSA-46fr-jh49-xvhx
+[GHSA-4q85-33p6-j5g6]: https://github.com/advisories/GHSA-4q85-33p6-j5g6
+[GHSA-4xgf-cpjx-pc3j]: https://github.com/advisories/GHSA-4xgf-cpjx-pc3j
+[GHSA-6v7p-g79w-8964]: https://github.com/advisories/GHSA-6v7p-g79w-8964
+[GHSA-78cv-mqj4-43f7]: https://github.com/advisories/GHSA-78cv-mqj4-43f7
+[GHSA-7wx4-6vff-v64p]: https://github.com/advisories/GHSA-7wx4-6vff-v64p
+[GHSA-8v8h-hg4w-mvq2]: https://github.com/advisories/GHSA-8v8h-hg4w-mvq2
+[GHSA-cv84-9p8j-fj68]: https://github.com/advisories/GHSA-cv84-9p8j-fj68
+[GHSA-cx3h-4qpv-8hc9]: https://github.com/advisories/GHSA-cx3h-4qpv-8hc9
+[GHSA-f4xh-w4cj-qxq8]: https://github.com/advisories/GHSA-f4xh-w4cj-qxq8
+[GHSA-mgf9-4vpg-hj56]: https://github.com/advisories/GHSA-mgf9-4vpg-hj56
+[GHSA-pw6j-qg29-8w7f]: https://github.com/advisories/GHSA-pw6j-qg29-8w7f
