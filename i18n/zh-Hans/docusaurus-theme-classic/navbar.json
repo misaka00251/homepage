@@ -7,9 +7,9 @@
     "message": "openRuyi",
     "description": "Navbar item with label openRuyi"
   },
-  "item.label.Governance": {
-    "message": "社区治理",
-    "description": "Navbar item with label Governance"
+  "item.label.Community": {
+    "message": "社区",
+    "description": "Navbar item with label Community"
   },
   "item.label.News": {
     "message": "新闻",

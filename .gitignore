@@ -1,3 +1,8 @@
+# Our i18n is generated in .generated-i18n, so we don't want to commit it to git
+# If you want to modify the i18n files, please modify the source files in the
+# corresponding source submodule.
+.generated-i18n/*
+
 # Logs
 logs
 *.log

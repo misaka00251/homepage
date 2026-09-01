@@ -1,0 +1,9 @@
+[submodule "news"]
+	path = news
+	url = https://github.com/openRuyi-Project/news.git
+[submodule "docs"]
+	path = docs
+	url = https://github.com/openRuyi-Project/docs.git
+[submodule "community"]
+	path = community
+	url = https://github.com/openRuyi-Project/community.git

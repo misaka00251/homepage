@@ -1,4 +1,5 @@
 import {themes as prismThemes} from 'prism-react-renderer';
+import type {Options as DocsOptions} from '@docusaurus/plugin-content-docs';
 import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 import eastAsianLineBreaks from './src/utils/eastAsianLineBreaks';
@@ -25,6 +26,7 @@ const config: Config = {
   i18n: {
     defaultLocale: 'en',
     locales: ['zh-Hans', 'en'],
+    path: '.generated-i18n',
   },
 
   clientModules: ['./src/clientModules/languageRedirect.ts'],
@@ -34,23 +36,31 @@ const config: Config = {
       'classic',
       {
         docs: {
-          sidebarPath: './sidebars.ts',
-          editUrl:
-            'https://github.com/openRuyi-Project/homepage/edit/main/',
-          editLocalizedFiles: true,
+          path: 'docs/content',
+          routeBasePath: 'docs',
+          sidebarPath: './docs/sidebars.ts',
+          editUrl: ({locale, docPath}) => {
+            if (locale === 'en') {
+              return `https://github.com/openRuyi-Project/docs/edit/main/content/${docPath}`;
+            }
+            return `https://github.com/openRuyi-Project/docs/edit/main/i18n/${locale}/docusaurus-plugin-content-docs/current/${docPath}`;
+          },
           beforeDefaultRemarkPlugins: [eastAsianLineBreaks],
         },
         blog: {
-          path: 'news',
+          path: 'news/content',
           routeBasePath: 'news',
           showReadingTime: true,
           feedOptions: {
             type: ['rss', 'atom'],
             xslt: true,
           },
-          editUrl:
-            'https://github.com/openRuyi-Project/homepage/edit/main/',
-          editLocalizedFiles: true,
+          editUrl: ({locale, blogPath}) => {
+            if (locale === 'en') {
+              return `https://github.com/openRuyi-Project/news/edit/main/content/${blogPath}`;
+            }
+            return `https://github.com/openRuyi-Project/news/edit/main/i18n/${locale}/docusaurus-plugin-content-blog/${blogPath}`;
+          },
           onInlineTags: 'warn',
           onInlineAuthors: 'warn',
           onUntruncatedBlogPosts: 'warn',
@@ -67,14 +77,26 @@ const config: Config = {
     [
       '@docusaurus/plugin-content-docs',
       {
-        id: 'governance',
-        path: 'governance',
-        routeBasePath: 'governance',
-        sidebarPath: './sidebarsGovernance.js',
-        editUrl: 'https://github.com/openRuyi-Project/homepage/edit/main/',
-        editLocalizedFiles: true,
-      },
+        id: 'community',
+        path: 'community/content',
+        routeBasePath: 'community',
+        sidebarPath: './community/sidebars.js',
+        editUrl: ({locale, docPath}) => {
+          if (locale === 'en') {
+            return `https://github.com/openRuyi-Project/community/edit/main/content/${docPath}`;
+          }
+          return `https://github.com/openRuyi-Project/community/edit/main/i18n/${locale}/docusaurus-plugin-content-docs-community/current/${docPath}`;
+        },
+        beforeDefaultRemarkPlugins: [eastAsianLineBreaks],
+      } satisfies DocsOptions,
     ],
+  ],
+
+  staticDirectories: [
+    'static',
+    'docs/static',
+    'news/static',
+    'community/static',
   ],
 
   themeConfig: {
@@ -96,10 +118,10 @@ const config: Config = {
           label: 'openRuyi',
         },
         {
-          to: '/governance/legal/code-of-conduct',
-          label: 'Governance',
+          to: '/community/legal/code-of-conduct',
+          label: 'Community',
           position: 'left',
-          activeBaseRegex: `/governance(/|$)/`,
+          activeBaseRegex: `/community(/|$)/`,
         },
         {to: '/news', label: 'News', position: 'left'},
         {
@@ -141,7 +163,7 @@ const config: Config = {
           items: [
             {
               label: 'Privacy Policy',
-              to: '/governance/legal/privacy-policy',
+              to: '/community/legal/privacy-policy',
             },
             {
               label: 'Contact',
