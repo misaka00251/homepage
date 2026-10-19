@@ -1,12 +1,16 @@
 release:
   label: Release
   permalink: /release
-  description: Release tag description
+  description: openRuyi general releases
 ecosystem:
   label: Ecosystem
   permalink: /ecosystem
-  description: Ecosystem tag description
+  description: Content related to ecosystem
 development:
   label: Development
   permalink: /development
-  description: Development tag description
+  description: Content related to development
+experimental:
+  label: Experimental
+  permalink: /experimental
+  description: openRuyi experimental releases
